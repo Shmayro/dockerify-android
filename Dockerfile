@@ -27,9 +27,22 @@ ENV ANDROID_HOME=/opt/android-sdk
 ENV ADB_DIR="$ANDROID_HOME/platform-tools"
 ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ADB_DIR:$PATH"
 
-# Install Android SDK components
-RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-29" "system-images;android-29;default;x86_64" "emulator" && \
-    echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;x86_64"
+# Copy emulator.zip
+COPY emulator.zip /root/emulator.zip
+COPY emulator/package.xml /root/package.xml
+
+
+# Detect architecture and set environment variable
+RUN if [ "$(uname -m)" = "aarch64" ]; then \
+        unzip /root/emulator.zip -d $ANDROID_HOME && \
+	mv /root/package.xml $ANDROID_HOME/emulator/package.xml && \
+        rm /root/emulator.zip && \
+        yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-29" "system-images;android-29;default;arm64-v8a" && \
+        echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;arm64-v8a"; \
+    else \
+        yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platform-tools" "platforms;android-29" "system-images;android-29;default;x86_64" && \
+        echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;x86_64"; \
+    fi
 
 # Copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -52,4 +65,6 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
 # docker build -t dockerify-android .
-# docker run -d --name dockerify-android --device /dev/kvm --privileged -p 5555:5555 shmayro/dockerify-android
+# docker run -d --name dockerify-android --device /dev/kvm --privileged --network host dockerify-android
+# docker run -d --name dockerify-android --device /dev/kvm --privileged --network host shmayro/dockerify-android
+# docker exec -it dockerify-android tail -f /var/log/supervisor/emulator.out
