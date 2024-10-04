@@ -25,6 +25,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Get current date
+        id: date
+        run: echo "DATE=$(date +'%d-%m-%y')" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
@@ -32,4 +36,5 @@ jobs:
           push: true
           tags: |
             shmayro/dockerify-android:latest
+            shmayro/dockerify-android:${{ env.DATE }}
           platforms: linux/amd64
