@@ -1,10 +1,9 @@
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:20.04
 
 # Install necessary packages
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        openjdk-11-jdk wget curl unzip bash supervisor xvfb x11vnc qemu-kvm websockify && \
-    rm -rf /var/lib/apt/lists/*
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    openjdk-11-jdk wget curl unzip bash supervisor xvfb x11vnc qemu-kvm websockify
 
 # Set up Android SDK
 RUN mkdir -p /opt/android-sdk/cmdline-tools && \
@@ -22,14 +21,8 @@ ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
 RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-28" "system-images;android-28;default;x86_64" "emulator" && \
     echo "no" | avdmanager create avd -n test -k "system-images;android-28;default;x86_64"
 
-FROM ubuntu:20.04
-
-# Copy necessary files from builder
-COPY --from=builder /opt/android-sdk /opt/android-sdk
-COPY --from=builder /etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-ENV ANDROID_HOME /opt/android-sdk
-ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+# Copy supervisor config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose necessary ports
 EXPOSE 5554 5555
