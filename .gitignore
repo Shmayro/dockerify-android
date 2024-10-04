@@ -1,0 +1,12 @@
+# Ignore Docker files
+Dockerfile
+*.env
+*.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
