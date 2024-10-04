@@ -69,7 +69,7 @@ To simplify the setup process, you can use the pre-built Docker image hosted on 
 
     ```bash
     docker run -d \
-      --name android-emulator \
+      --name dockerify-android \
       --device /dev/kvm \
       --privileged \
       --network host \
