@@ -1,5 +1,4 @@
 # Ignore Docker files
-Dockerfile
 *.env
 *.log
 
