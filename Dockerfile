@@ -1,7 +1,6 @@
-# Stage 1: Builder
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:20.04
 
-# Install necessary packages with minimal dependencies
+# Install necessary packages
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openjdk-11-jdk \
@@ -9,7 +8,9 @@ RUN apt-get update && \
         curl \
         unzip \
         supervisor \
-        qemu-kvm && \
+        qemu-kvm \
+        tzdata \
+        git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -22,35 +23,23 @@ RUN mkdir -p /opt/android-sdk/cmdline-tools && \
     mv latest/cmdline-tools/* latest/ || true && \
     rm -rf latest/cmdline-tools || true
 
-# Environment variables
 ENV ANDROID_HOME=/opt/android-sdk
-ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+ENV ADB_DIR="$ANDROID_HOME/platform-tools"
+ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ADB_DIR:$PATH"
 
 # Install Android SDK components
-RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-28" "system-images;android-28;default;x86_64" "emulator" && \
-    echo "no" | avdmanager create avd -n test -k "system-images;android-28;default;x86_64"
+RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-29" "system-images;android-29;default;x86_64" "emulator" && \
+    echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;x86_64"
 
-# Stage 2: Final Image
-FROM ubuntu:20.04
-
-# Install runtime dependencies with minimal dependencies
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openjdk-11-jdk \
-        supervisor \
-        qemu-kvm && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Environment variables
-ENV ANDROID_HOME=/opt/android-sdk
-ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-
-# Copy Android SDK from builder stage
-COPY --from=builder /opt/android-sdk /opt/android-sdk
-
-# Copy supervisor configuration
+# Copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Clone the rootAVD repository
+RUN git clone https://gitlab.com/newbit/rootAVD.git /root/rootAVD
+
+# Copy the first-boot script
+COPY first-boot.sh /root/first-boot.sh
+RUN chmod +x /root/first-boot.sh
 
 # Expose necessary ports
 EXPOSE 5554 5555
@@ -59,5 +48,8 @@ EXPOSE 5554 5555
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
   CMD adb devices | grep emulator-5554 || exit 1
 
-# Start Supervisor to manage emulator
+# Start Supervisor to manage the emulator
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+# docker build -t dockerify-android .
+# docker run -d --name dockerify-android --device /dev/kvm --privileged -p 5555:5555 shmayro/dockerify-android
