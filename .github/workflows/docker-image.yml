@@ -30,5 +30,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: shmayro/dockerify-android:latest
+          tags: |
+            shmayro/dockerify-android:latest
+            shmayro/dockerify-android:${{ github.ref }}
           platforms: linux/amd64

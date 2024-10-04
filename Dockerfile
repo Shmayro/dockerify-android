@@ -2,8 +2,10 @@ FROM ubuntu:20.04
 
 # Install necessary packages
 RUN apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    openjdk-11-jdk wget curl unzip bash supervisor xvfb x11vnc qemu-kvm websockify
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    openjdk-11-jdk wget curl unzip bash supervisor qemu-kvm && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set up Android SDK
 RUN mkdir -p /opt/android-sdk/cmdline-tools && \
@@ -14,8 +16,8 @@ RUN mkdir -p /opt/android-sdk/cmdline-tools && \
     mv latest/cmdline-tools/* latest/ || true && \
     rm -rf latest/cmdline-tools || true
 
-ENV ANDROID_HOME /opt/android-sdk
-ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+ENV ANDROID_HOME=/opt/android-sdk
+ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
 
 # Install Android SDK components
 RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-28" "system-images;android-28;default;x86_64" "emulator" && \
