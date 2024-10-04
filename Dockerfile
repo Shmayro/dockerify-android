@@ -1,5 +1,5 @@
 # Stage 1: Builder
-FROM ubuntu:20.04-slim AS builder
+FROM ubuntu:20.04 AS builder
 
 # Install necessary packages with minimal dependencies
 RUN apt-get update && \
@@ -31,7 +31,7 @@ RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;androi
     echo "no" | avdmanager create avd -n test -k "system-images;android-28;default;x86_64"
 
 # Stage 2: Final Image
-FROM ubuntu:20.04-slim
+FROM ubuntu:20.04
 
 # Install runtime dependencies with minimal dependencies
 RUN apt-get update && \
