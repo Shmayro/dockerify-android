@@ -3,14 +3,12 @@ FROM ubuntu:20.04
 # Install necessary packages
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openjdk-11-jdk \
+        openjdk-11-jdk-headless \
         wget \
         curl \
         unzip \
         supervisor \
         qemu-kvm \
-        tzdata \
-        git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -47,8 +45,8 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then \
 # Copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Clone the rootAVD repository
-RUN git clone https://gitlab.com/newbit/rootAVD.git /root/rootAVD
+# Copy the rootAVD repository
+COPY rootAVD /root/rootAVD
 
 # Copy the first-boot script
 COPY first-boot.sh /root/first-boot.sh
