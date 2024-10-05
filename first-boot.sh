@@ -5,6 +5,11 @@ RETRY_COUNT=0
 MAX_RETRIES=10
 SLEEP_INTERVAL=5
 
+# Detect ip and forward ADB ports from the container's network
+# interface to localhost.
+LOCAL_IP=$(ip addr list eth0 | grep "inet " | cut -d' ' -f6 | cut -d/ -f1)
+socat tcp-listen:"5555",bind="$LOCAL_IP",fork tcp:127.0.0.1:"5555" &
+
 while ! adb devices | grep emulator-5554; do
     if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
         echo "Emulator did not become healthy after $MAX_RETRIES attempts. Exiting."

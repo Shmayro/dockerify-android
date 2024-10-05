@@ -9,6 +9,7 @@ RUN apt-get update && \
         unzip \
         supervisor \
         qemu-kvm \
+        socat \
         tzdata && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
