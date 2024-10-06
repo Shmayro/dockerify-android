@@ -9,3 +9,6 @@ Thumbs.db
 # Ignore IDE files
 .vscode/
 .idea/
+
+# Docker compose data
+data/
