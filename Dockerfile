@@ -9,6 +9,7 @@ RUN apt-get update && \
         unzip \
         supervisor \
         qemu-kvm \
+        iproute2 \
         socat \
         tzdata && \
     apt-get clean && \
@@ -65,6 +66,6 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
 # docker build -t dockerify-android .
-# docker run -d --name dockerify-android --device /dev/kvm --privileged --network host dockerify-android
-# docker run -d --name dockerify-android --device /dev/kvm --privileged --network host shmayro/dockerify-android
+# docker run -d --name dockerify-android --device /dev/kvm --privileged -p 5555:5555 dockerify-android
+# docker run -d --name dockerify-android --device /dev/kvm --privileged -p 5555:5555 shmayro/dockerify-android
 # docker exec -it dockerify-android tail -f /var/log/supervisor/emulator.out
