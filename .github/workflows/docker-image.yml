@@ -31,12 +31,18 @@ jobs:
         id: date
         run: echo "DATE=$(date +'%d-%m-%y')" >> $GITHUB_ENV
 
+      - name: Get Pull Request ID
+        if: github.event_name == 'pull_request'
+        id: pr
+        run: echo "PR_ID=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: |
-            shmayro/dockerify-android:latest
-            shmayro/dockerify-android:${{ env.DATE }}
+            ${{ github.ref == 'refs/heads/main' && 'shmayro/dockerify-android:latest' || '' }}
+            ${{ github.ref == 'refs/heads/main' && 'shmayro/dockerify-android:${{ env.DATE }}' || '' }}
+            ${{ github.event_name == 'pull_request' && 'shmayro/dockerify-android:pr-${{ env.PR_ID }}' || '' }}
           platforms: linux/amd64
