@@ -28,6 +28,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Get current date
+        if: github.ref == 'refs/heads/main'
         id: date
         run: echo "DATE=$(date +'%d-%m-%y')" >> $GITHUB_ENV
 
@@ -43,6 +44,6 @@ jobs:
           push: true
           tags: |
             ${{ github.ref == 'refs/heads/main' && 'shmayro/dockerify-android:latest' || '' }}
-            ${{ github.ref == 'refs/heads/main' && 'shmayro/dockerify-android:${{ env.DATE }}' || '' }}
-            ${{ github.event_name == 'pull_request' && 'shmayro/dockerify-android:pr-${{ env.PR_ID }}' || '' }}
+            ${{ github.ref == 'refs/heads/main' && 'shmayro/dockerify-android:' + env.DATE || '' }}
+            ${{ github.event_name == 'pull_request' && 'shmayro/dockerify-android:pr-' + env.PR_ID || '' }}
           platforms: linux/amd64
