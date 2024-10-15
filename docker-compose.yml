@@ -1,6 +1,8 @@
 services:
   dockerify-android:
-    image: dockerify-android
+    image: shmayro/dockerify-android:latest
+    build:
+      context: .
     ports:
       - "5555:5555"
     volumes:
