@@ -16,7 +16,7 @@ apply_settings() {
   adb shell settings put system screen_off_timeout 15000
   adb shell settings put global private_dns_mode hostname
   adb shell settings put global private_dns_specifier dns2024.haroun.dev
-  adb shell svc wifi disable
+  # adb shell svc wifi disable
 }
 
 # Detect ip and forward ADB ports from the container's network
