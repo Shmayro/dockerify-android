@@ -9,14 +9,19 @@ apply_settings() {
     COMPLETED=$(adb shell getprop sys.boot_completed | tr -d '\r')
     sleep 5
   done
+  adb root
   adb shell settings put global window_animation_scale 0
   adb shell settings put global transition_animation_scale 0
   adb shell settings put global animator_duration_scale 0
   adb shell settings put global stay_on_while_plugged_in 0
   adb shell settings put system screen_off_timeout 15000
+  adb shell settings put system accelerometer_rotation 0
   adb shell settings put global private_dns_mode hostname
-  adb shell settings put global private_dns_specifier dns2024.haroun.dev
-  # adb shell svc wifi disable
+  adb shell settings put global private_dns_specifier ${DNS:-one.one.one.one}
+  adb shell settings put global airplane_mode_on 1
+  adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true
+  adb shell svc data disable
+  adb shell svc wifi enable
 }
 
 # Detect ip and forward ADB ports from the container's network
@@ -34,7 +39,7 @@ fi
 
 echo "Init ADV ..."
 
-echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;x86_64"
+echo "no" | avdmanager create avd -n android -k "system-images;android-30;default;x86_64"
 
 echo "Preparation ..."
 
@@ -52,18 +57,18 @@ done
 
 echo "Installing GAPPS ..."
 
-wget https://deac-fra.dl.sourceforge.net/project/opengapps/x86_64/20220503/open_gapps-x86_64-10.0-pico-20220503.zip?viasf=1 -O gapps-10.zip
-unzip gapps-10.zip 'Core/*' -d gapps-10  && rm gapps-10.zip
-rm gapps-10/Core/setup*
-lzip -d gapps-10/Core/*.lz
-for f in $(ls gapps-10/Core/*.tar); do
-  tar -x --strip-components 2 -f $f -C gapps-10
+wget https://netcologne.dl.sourceforge.net/project/opengapps/x86_64/20220503/open_gapps-x86_64-11.0-pico-20220503.zip?viasf=1 -O gapps-11.zip
+unzip gapps-11.zip 'Core/*' -d gapps-11  && rm gapps-11.zip
+rm gapps-11/Core/setup*
+lzip -d gapps-11/Core/*.lz
+for f in $(ls gapps-11/Core/*.tar); do
+  tar -x --strip-components 2 -f $f -C gapps-11
 done
 
-adb push gapps-10/etc /system
-adb push gapps-10/framework /system
-adb push gapps-10/app /system
-adb push gapps-10/priv-app /system
+adb push gapps-11/etc /system
+adb push gapps-11/framework /system
+adb push gapps-11/app /system
+adb push gapps-11/priv-app /system
 
 echo "Root Script Starting..."
 
@@ -71,13 +76,14 @@ echo "Root Script Starting..."
 git clone https://gitlab.com/newbit/rootAVD.git
 pushd rootAVD
 sed -i 's/read -t 10 choice/choice=2/' rootAVD.sh
-./rootAVD.sh system-images/android-29/default/x86_64/ramdisk.img
+./rootAVD.sh system-images/android-30/default/x86_64/ramdisk.img
+cp /opt/android-sdk/system-images/android-30/default/x86_64/ramdisk.img /data/android.avd/ramdisk.img
 popd
 echo "Root Done"
 sleep 15
 echo "Cleanup ..."
 # done
-rm -r gapps-10
+rm -r gapps-11
 rm -r rootAVD
 apply_settings
 touch /data/.first-boot-done

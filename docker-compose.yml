@@ -8,10 +8,8 @@ services:
     volumes:
       - ./data:/data
       - ./extras:/extras
-      - ./patch/ramdisk.img:/opt/android-sdk/system-images/android-29/default/x86_64/ramdisk.img
-      - ./patch/ramdisk.img.backup:/opt/android-sdk/system-images/android-29/default/x86_64/ramdisk.img.backup
     environment:
-      - DNS=1.1.1.1
+      - DNS=one.one.one.one
       - RAM_SIZE=8192
     privileged: true
     devices:
