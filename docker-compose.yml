@@ -14,4 +14,4 @@ services:
     privileged: true
     devices:
       - /dev/kvm
-    container_name: dockerify-android-snapshot
+    container_name: dockerify-android
