@@ -10,6 +10,7 @@ services:
       - ./extras:/extras
     environment:
       - DNS=one.one.one.one
+      - SDCARD_SIZE=64G
       - RAM_SIZE=8192
     privileged: true
     devices:
