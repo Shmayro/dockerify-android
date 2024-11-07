@@ -1,21 +1,21 @@
-FROM ubuntu:20.04
+FROM alpine:latest
 
 # Install necessary packages
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openjdk-17-jdk-headless \
+RUN apk update && \
+    apk add --no-cache \
+        openjdk17-jre-headless \
+        bash \
         wget \
         curl \
         git \
         lzip \
         unzip \
         supervisor \
-        qemu-kvm \
+        qemu-system-x86_64 \
         iproute2 \
         socat \
         tzdata && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/cache/apk/*
 
 # Set up Android SDK
 RUN mkdir -p /opt/android-sdk/cmdline-tools && \
@@ -32,7 +32,8 @@ ENV ADB_DIR="$ANDROID_HOME/platform-tools"
 ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ADB_DIR:$PATH"
 
 # Initializing the required directories.
-RUN mkdir /root/.android/ && \
+RUN mkdir -p /var/log/supervisor && \
+    mkdir /root/.android/ && \
 	touch /root/.android/repositories.cfg && \
 	mkdir /data && \
     mkdir /extras
