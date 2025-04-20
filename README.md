@@ -101,6 +101,7 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 - [ ] Support ARM64 CPU architecture
 - [x] Preinstall PICO GAPPS
 - [x] Support Magisk
+- [ ] Adding web interface of scrcpy
 
 ## 🐞 **Troubleshooting**
 
