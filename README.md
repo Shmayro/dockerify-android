@@ -96,9 +96,9 @@ The **quickest and easiest way** to interact with the Android emulator is throug
 1. Open your browser and go to `http://localhost:8000`
 2. You should see the device listed as "dockerify-android:5555" automatically connected
 3. Select one of the available streaming options:
-   - **Tiny H264** (recommended for best performance)
-   - Broadway.js
-   - H264 Converter
+   - **H264 Converter** (recommended for best high-quality experience)
+   - Tiny H264 (good for low-bandwidth connections)
+   - Broadway.js (fallback option)
 
 ![scrcpy-web interface](/doc/scrcpy-web-preview.png)
 
