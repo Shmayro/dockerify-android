@@ -9,7 +9,7 @@
 
 **Dockerify Android** is a Dockerized Android emulator supporting multiple CPU architectures (**x86** and **arm64** in the near future ...) with native performance and seamless ADB access. It allows developers to run Android virtual devices (AVDs) efficiently within Docker containers, facilitating scalable testing and development environments.
 
-### 🔥 **Key Feature: Web Interface Access**
+### 🔥 **Key Feature: Web Interface Access** 🌐
 
 Access and control the Android emulator directly in your web browser with the integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
 
@@ -43,7 +43,7 @@ Access and control the Android emulator directly in your web browser with the in
 
 ## 🔧 **Features**
 
-- **Web Interface:** Access the emulator directly from your browser with the integrated scrcpy-web interface.
+- **✨ Web Interface:** Access the emulator directly from your browser with the integrated scrcpy-web interface.
 - **Root and Magisk Preinstalled:** Comes with root access and Magisk preinstalled for advanced modifications.
 - **PICO GAPPS Preinstalled:** Includes PICO GAPPS for essential Google services.
 - **Seamless ADB Access:** Connect to the emulator via ADB from the host and other networked devices.
@@ -89,7 +89,7 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 
 ## 📡 **Usage**
 
-### Use the Web Interface to Access the Emulator
+### 🌐 Use the scrcpy-web to Access the Emulator
 
 The **quickest and easiest way** to interact with the Android emulator is through your web browser:
 
