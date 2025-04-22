@@ -5,7 +5,13 @@
 [![GitHub Issues](https://img.shields.io/github/issues/shmayro/dockerify-android)](https://github.com/shmayro/dockerify-android/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/shmayro/dockerify-android?style=social)](https://github.com/shmayro/dockerify-android/stargazers)
 
+<img align="right" src="/doc/dockerify-android-web-preview.png" />
+
 **Dockerify Android** is a Dockerized Android emulator supporting multiple CPU architectures (**x86** and **arm64** in the near future ...) with native performance and seamless ADB access. It allows developers to run Android virtual devices (AVDs) efficiently within Docker containers, facilitating scalable testing and development environments.
+
+## 🔥 **Key Feature: Web Interface Access**
+
+Access and control the Android emulator directly in your web browser with our integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
 
 ## 🏠 **Homepage**
 
@@ -77,14 +83,20 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 
 ### Use the Web Interface to Access the Emulator
 
-The easiest way to interact with the Android emulator is through the web interface:
+The **quickest and easiest way** to interact with the Android emulator is through your web browser:
 
-1. Open your browser and navigate to `http://localhost:8000`
+1. Open your browser and go to `http://localhost:8000`
 2. You should see the device listed as "dockerify-android:5555" automatically connected
 3. Select one of the available streaming options:
    - **Tiny H264** (recommended for best performance)
    - Broadway.js
    - H264 Converter
+
+> **Benefits of Web Interface:**
+> - No extra software to install
+> - Access from any computer with a web browser
+> - Full touchscreen and keyboard support
+> - Perfect for remote work or sharing the emulator with team members
 
 ![scrcpy-web interface](/doc/scrcpy-web-preview.png)
 
