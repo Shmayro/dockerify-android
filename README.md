@@ -71,7 +71,7 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
     docker-compose up -d
     ```
 
-    > **Note:** This command runs the container in detached mode, grants necessary privileges for KVM, and shares the host's network stack for seamless ADB access.
+    > **Note:** This command launches the Android emulator and web interface. First boot takes some time to initialize. Once ready, the device will appear in the web interface at http://localhost:8000.
 
 ## 📡 **Usage**
 
