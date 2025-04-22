@@ -1,6 +1,6 @@
 # Dockerify Android
 
-<img align="right" src="/doc/dockerify-android-web-preview2.png" />
+<img align="right" src="/doc/dockerify-android-web-preview.png" />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker Pulls](https://img.shields.io/docker/pulls/shmayro/dockerify-android)](https://hub.docker.com/r/shmayro/dockerify-android)
