@@ -11,7 +11,7 @@
 
 ### 🔥 **Key Feature: Web Interface Access** 🌐
 
-Access and control the Android emulator directly in your web browser with the integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
+Access and control the Android emulator directly in your web browser with the integrated [scrcpy-web](https://github.com/Shmayro/ws-scrcpy-docker) interface! No additional software needed - just open your browser and start using Android.
 
 > **Benefits of Web Interface:**
 > - No extra software to install
@@ -43,7 +43,7 @@ Access and control the Android emulator directly in your web browser with the in
 
 ## 🔧 **Features**
 
-- **✨ Web Interface:** Access the emulator directly from your browser with the integrated scrcpy-web interface.
+- **🌐 Web Interface:** Access the emulator directly from your browser with the integrated [scrcpy-web](https://github.com/Shmayro/ws-scrcpy-docker) interface.
 - **Root and Magisk Preinstalled:** Comes with root access and Magisk preinstalled for advanced modifications.
 - **PICO GAPPS Preinstalled:** Includes PICO GAPPS for essential Google services.
 - **Seamless ADB Access:** Connect to the emulator via ADB from the host and other networked devices.
@@ -89,14 +89,14 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 
 ## 📡 **Usage**
 
-### 🌐 Use the scrcpy-web to Access the Emulator
+### 🌐 Use the Web Interface to Access the Emulator
 
 The **quickest and easiest way** to interact with the Android emulator is through your web browser:
 
 1. Open your browser and go to `http://localhost:8000`
 2. You should see the device listed as "dockerify-android:5555" automatically connected
 3. Select one of the available streaming options:
-   - **H264 Converter** (recommended for best high-quality experience)
+   - **H264 Converter** (recommended for best overall experience)
    - Tiny H264 (good for low-bandwidth connections)
    - Broadway.js (fallback option)
 
@@ -138,7 +138,7 @@ scrcpy -s localhost:5555
 - [ ] Support ARM64 CPU architecture
 - [x] Preinstall PICO GAPPS
 - [x] Support Magisk
-- [x] Adding web interface of scrcpy
+- [x] Adding web interface of [scrcpy](https://github.com/Shmayro/ws-scrcpy-docker)
 
 ## 🐞 **Troubleshooting**
 
