@@ -20,7 +20,7 @@ RUN apt-get update && \
 # Set up Android SDK
 RUN mkdir -p /opt/android-sdk/cmdline-tools && \
     cd /opt/android-sdk/cmdline-tools && \
-    wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip && \
+    wget https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip -O cmdline-tools.zip && \
     unzip cmdline-tools.zip -d latest && \
     rm cmdline-tools.zip && \
     mv latest/cmdline-tools/* latest/ || true && \
