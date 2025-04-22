@@ -173,7 +173,7 @@ After the first boot completes, a file marker is created to prevent running the 
 All logs from the emulator and boot processes are redirected to Docker's standard log system. To view all container logs:
 
 ```bash
-docker logs dockerify-android
+docker logs -f dockerify-android
 ```
 
 This includes:
