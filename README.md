@@ -1,17 +1,19 @@
 # Dockerify Android
 
+<img align="right" src="/doc/dockerify-android-web-preview2.png" />
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker Pulls](https://img.shields.io/docker/pulls/shmayro/dockerify-android)](https://hub.docker.com/r/shmayro/dockerify-android)
 [![GitHub Issues](https://img.shields.io/github/issues/shmayro/dockerify-android)](https://github.com/shmayro/dockerify-android/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/shmayro/dockerify-android?style=social)](https://github.com/shmayro/dockerify-android/stargazers)
 
-<img align="right" src="/doc/dockerify-android-web-preview.png" />
-
 **Dockerify Android** is a Dockerized Android emulator supporting multiple CPU architectures (**x86** and **arm64** in the near future ...) with native performance and seamless ADB access. It allows developers to run Android virtual devices (AVDs) efficiently within Docker containers, facilitating scalable testing and development environments.
 
-## 🔥 **Key Feature: Web Interface Access**
+### 🔥 **Key Feature: Web Interface Access**
 
 Access and control the Android emulator directly in your web browser with our integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
+
+<br clear="right"/>
 
 ## 🏠 **Homepage**
 
