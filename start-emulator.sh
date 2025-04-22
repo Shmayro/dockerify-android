@@ -18,4 +18,4 @@ fi
 
 chmod -x /opt/android-sdk/emulator/crashpad_handler
 # Start the emulator with the appropriate ramdisk.img
-/opt/android-sdk/emulator/emulator -avd android -writable-system -no-window -no-audio -no-boot-anim -skip-adb-auth -gpu swiftshader_indirect -no-snapshot -no-metrics $RAMDISK ${SDCARD_SIZE:+$SDCARD} -qemu -m ${RAM_SIZE:-4096}
+/opt/android-sdk/emulator/emulator -avd android -nojni -netfast -writable-system -no-window -no-audio -no-boot-anim -skip-adb-auth -gpu swiftshader_indirect -no-snapshot -no-metrics $RAMDISK ${SDCARD_SIZE:+$SDCARD} -qemu -m ${RAM_SIZE:-4096}
