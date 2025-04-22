@@ -11,7 +11,7 @@
 
 ### 🔥 **Key Feature: Web Interface Access**
 
-Access and control the Android emulator directly in your web browser with our integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
+Access and control the Android emulator directly in your web browser with the integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
 
 > **Benefits of Web Interface:**
 > - No extra software to install
@@ -151,14 +151,14 @@ scrcpy -s localhost:5555
   - **Check Emulator Status:** Ensure the emulator has fully booted by checking logs.
 
     ```bash
-    docker logs android-emulator
+    docker logs dockerify-android
     ```
 
 - **Emulator Not Starting:**
   - **Check Supervisor Logs:**
 
     ```bash
-    docker exec -it android-emulator bash
+    docker exec -it dockerify-android bash
     cat /var/log/supervisor/emulator.out.log
     cat /var/log/supervisor/emulator.err.log
     ```
