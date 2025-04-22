@@ -35,6 +35,8 @@ Access and control the Android emulator directly in your web browser with the in
   - [Using Web Interface](#use-the-web-interface-to-access-the-emulator)
   - [Using ADB](#connect-via-adb)
   - [Using Desktop scrcpy](#use-scrcpy-to-mirror-the-emulator-screen)
+- [First Boot Process](#-first-boot-process)
+- [Container Logs](#-container-logs)
 - [Roadmap](#-roadmap)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
@@ -53,6 +55,7 @@ Access and control the Android emulator directly in your web browser with the in
 - **Docker Integration:** Easily deploy the Android emulator within a Docker container.
 - **Easy Setup:** Simple Docker commands to build and run the emulator.
 - **Supervisor Management:** Manages emulator processes with Supervisor for reliability.
+- **Unified Container Logs:** All emulator and boot logs are redirected to Docker's standard log system.
 
 ## 🛠️ **Prerequisites**
 
@@ -131,6 +134,53 @@ scrcpy -s localhost:5555
 
 > **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
 
+## 🔄 **First Boot Process**
+
+The first time you start the container, it will perform a comprehensive setup process that includes:
+
+1. **AVD Creation:** Creates a new Android Virtual Device running Android 30 (Android 11)
+2. **Installing PICO GAPPS:** Adds essential Google services to the emulator
+3. **Rooting the Device:** Performs multiple reboots to:
+   - Disable AVB verification
+   - Remount system as writable
+   - Install root access via the rootAVD script
+   - Install PICO GAPPS components
+   - Configure optimal device settings
+
+> **Important:** The first boot can take 10-15 minutes to complete. You'll know the process is finished when you see the following log output:
+> ```
+> Broadcast completed: result=0
+> Sucess !!
+> 2025-04-22 13:45:18,724 INFO exited: first-boot (exit status 0; expected)
+> ```
+
+> **Note:** If the Android emulator has restarted for any reason, it's recommended to restart the Docker container to reapply optimizations:
+> ```bash
+> docker compose restart
+> ```
+> This ensures the following optimizations are applied:
+> - Disabled animations for better performance
+> - Screen timeout set to 15 seconds
+> - Disabled rotation
+> - Custom DNS settings
+> - Airplane mode enabled (with WiFi still active)
+> - Data connection disabled
+
+After the first boot completes, a file marker is created to prevent running the initialization again on subsequent starts.
+
+## 📋 **Container Logs**
+
+All logs from the emulator and boot processes are redirected to Docker's standard log system. To view all container logs:
+
+```bash
+docker logs dockerify-android
+```
+
+This includes:
+- Supervisor logs
+- Android emulator stdout/stderr
+- First-boot process logs
+
 ## 🚧 **Roadmap**
 
 - [ ] Support for additional Android versions
@@ -139,6 +189,7 @@ scrcpy -s localhost:5555
 - [x] Preinstall PICO GAPPS
 - [x] Support Magisk
 - [x] Adding web interface of [scrcpy](https://github.com/Shmayro/ws-scrcpy-docker)
+- [x] Redirect all logs to container stdout/stderr
 
 ## 🐞 **Troubleshooting**
 
@@ -154,13 +205,19 @@ scrcpy -s localhost:5555
     docker logs dockerify-android
     ```
 
+- **First Boot Taking Too Long:**
+  - This is normal, as the first boot process needs to perform several operations including:
+    - Installing GAPPS
+    - Rooting the device
+    - Configuring system settings
+  - The process can take 10-15 minutes depending on your system performance
+  - You can monitor progress with `docker logs -f dockerify-android`
+
 - **Emulator Not Starting:**
-  - **Check Supervisor Logs:**
+  - **Check Container Logs:**
 
     ```bash
-    docker exec -it dockerify-android bash
-    cat /var/log/supervisor/emulator.out.log
-    cat /var/log/supervisor/emulator.err.log
+    docker logs dockerify-android
     ```
 
 - **KVM Not Accessible:**
