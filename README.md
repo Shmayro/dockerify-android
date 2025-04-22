@@ -18,6 +18,9 @@
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
 - [Usage](#-usage)
+  - [Using Web Interface](#use-the-web-interface-to-access-the-emulator)
+  - [Using ADB](#connect-via-adb)
+  - [Using Desktop scrcpy](#use-scrcpy-to-mirror-the-emulator-screen)
 - [Roadmap](#-roadmap)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
@@ -26,6 +29,7 @@
 
 ## 🔧 **Features**
 
+- **Web Interface:** Access the emulator directly from your browser with the integrated scrcpy-web interface.
 - **Root and Magisk Preinstalled:** Comes with root access and Magisk preinstalled for advanced modifications.
 - **PICO GAPPS Preinstalled:** Includes PICO GAPPS for essential Google services.
 - **Seamless ADB Access:** Connect to the emulator via ADB from the host and other networked devices.
@@ -71,28 +75,47 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 
 ## 📡 **Usage**
 
-1. **Connect via ADB:**
+### Use the Web Interface to Access the Emulator
 
-    ```bash
-    adb connect localhost:5555
-    adb devices
-    ```
+The easiest way to interact with the Android emulator is through the web interface:
 
-    **Expected Output:**
+1. Open your browser and navigate to `http://localhost:8000`
+2. You should see the device listed as "dockerify-android:5555" automatically connected
+3. Select one of the available streaming options:
+   - **Tiny H264** (recommended for best performance)
+   - Broadway.js
+   - H264 Converter
 
-    ```
-    connected to localhost:5555
-    List of devices attached
-    localhost:5555	device
-    ```
+![scrcpy-web interface](/doc/scrcpy-web-preview.png)
 
-2. **Use scrcpy to Mirror the Emulator Screen:**
+> **Note:** First boot may take some time as the Android emulator needs to fully initialize. When everything is ready, the device will appear in the web interface as shown in the screenshot above.
 
-    ```bash
-    scrcpy -s localhost:5555
-    ```
+### Connect via ADB
 
-    > **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
+If you need direct ADB access to the emulator:
+
+```bash
+adb connect localhost:5555
+adb devices
+```
+
+**Expected Output:**
+
+```
+connected to localhost:5555
+List of devices attached
+localhost:5555	device
+```
+
+### Use scrcpy to Mirror the Emulator Screen
+
+For a native desktop experience, you can use scrcpy:
+
+```bash
+scrcpy -s localhost:5555
+```
+
+> **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
 
 ## 🚧 **Roadmap**
 
@@ -101,7 +124,7 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 - [ ] Support ARM64 CPU architecture
 - [x] Preinstall PICO GAPPS
 - [x] Support Magisk
-- [ ] Adding web interface of scrcpy
+- [x] Adding web interface of scrcpy
 
 ## 🐞 **Troubleshooting**
 
