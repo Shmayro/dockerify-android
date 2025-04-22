@@ -2,7 +2,7 @@
 
 # Check if the .first-boot-done file exists
 if [ -f /data/.first-boot-done ]; then
-  RAMDISK_PATH="-ramdisk /data/android.avd/ramdisk.img"
+  RAMDISK="-ramdisk /data/android.avd/ramdisk.img"
 fi
 
 # Start the emulator with the appropriate ramdisk.img
