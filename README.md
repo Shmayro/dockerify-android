@@ -1,11 +1,25 @@
 # Dockerify Android
 
+<img align="right" src="/doc/dockerify-android-web-preview.png" />
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker Pulls](https://img.shields.io/docker/pulls/shmayro/dockerify-android)](https://hub.docker.com/r/shmayro/dockerify-android)
 [![GitHub Issues](https://img.shields.io/github/issues/shmayro/dockerify-android)](https://github.com/shmayro/dockerify-android/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/shmayro/dockerify-android?style=social)](https://github.com/shmayro/dockerify-android/stargazers)
 
-**Dockerify Android** is a Dockerized Android emulator supporting multiple CPU architectures (**x86** and **arm64** in the near future ...) with native performance and seamless ADB access. It allows developers to run Android virtual devices (AVDs) efficiently within Docker containers, facilitating scalable testing and development environments.
+**Dockerify Android** is a Dockerized Android emulator supporting multiple CPU architectures (**x86** and **arm64** in the near future ...) with native performance and seamless ADB & Web access. It allows developers to run Android virtual devices (AVDs) efficiently within Docker containers, facilitating scalable testing and development environments.
+
+### 🔥 **Key Feature: Web Interface Access** 🌐
+
+Access and control the Android emulator directly in your web browser with the integrated [scrcpy-web](https://github.com/Shmayro/ws-scrcpy-docker) interface! No additional software needed - just open your browser and start using Android.
+
+> **Benefits of Web Interface:**
+> - No extra software to install
+> - Access from any computer with a web browser
+> - Full touchscreen and keyboard support
+> - Perfect for remote work or sharing the emulator with team members
+
+<br clear="right"/>
 
 ## 🏠 **Homepage**
 
@@ -18,6 +32,9 @@
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
 - [Usage](#-usage)
+  - [Using Web Interface](#use-the-web-interface-to-access-the-emulator)
+  - [Using ADB](#connect-via-adb)
+  - [Using Desktop scrcpy](#use-scrcpy-to-mirror-the-emulator-screen)
 - [Roadmap](#-roadmap)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
@@ -26,6 +43,7 @@
 
 ## 🔧 **Features**
 
+- **🌐 Web Interface:** Access the emulator directly from your browser with the integrated [scrcpy-web](https://github.com/Shmayro/ws-scrcpy-docker) interface.
 - **Root and Magisk Preinstalled:** Comes with root access and Magisk preinstalled for advanced modifications.
 - **PICO GAPPS Preinstalled:** Includes PICO GAPPS for essential Google services.
 - **Seamless ADB Access:** Connect to the emulator via ADB from the host and other networked devices.
@@ -67,32 +85,51 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
     docker-compose up -d
     ```
 
-    > **Note:** This command runs the container in detached mode, grants necessary privileges for KVM, and shares the host's network stack for seamless ADB access.
+    > **Note:** This command launches the Android emulator and web interface. First boot takes some time to initialize. Once ready, the device will appear in the web interface at http://localhost:8000.
 
 ## 📡 **Usage**
 
-1. **Connect via ADB:**
+### 🌐 Use the Web Interface to Access the Emulator
 
-    ```bash
-    adb connect localhost:5555
-    adb devices
-    ```
+The **quickest and easiest way** to interact with the Android emulator is through your web browser:
 
-    **Expected Output:**
+1. Open your browser and go to `http://localhost:8000`
+2. You should see the device listed as "dockerify-android:5555" automatically connected
+3. Select one of the available streaming options:
+   - **H264 Converter** (recommended for best overall experience)
+   - Tiny H264 (good for low-bandwidth connections)
+   - Broadway.js (fallback option)
 
-    ```
-    connected to localhost:5555
-    List of devices attached
-    localhost:5555	device
-    ```
+![scrcpy-web interface](/doc/scrcpy-web-preview.png)
 
-2. **Use scrcpy to Mirror the Emulator Screen:**
+> **Note:** First boot may take some time as the Android emulator needs to fully initialize. When everything is ready, the device will appear in the web interface as shown in the screenshot above.
 
-    ```bash
-    scrcpy -s localhost:5555
-    ```
+### Connect via ADB
 
-    > **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
+If you need direct ADB access to the emulator:
+
+```bash
+adb connect localhost:5555
+adb devices
+```
+
+**Expected Output:**
+
+```
+connected to localhost:5555
+List of devices attached
+localhost:5555	device
+```
+
+### Use scrcpy to Mirror the Emulator Screen
+
+For a native desktop experience, you can use scrcpy:
+
+```bash
+scrcpy -s localhost:5555
+```
+
+> **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
 
 ## 🚧 **Roadmap**
 
@@ -101,6 +138,7 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 - [ ] Support ARM64 CPU architecture
 - [x] Preinstall PICO GAPPS
 - [x] Support Magisk
+- [x] Adding web interface of [scrcpy](https://github.com/Shmayro/ws-scrcpy-docker)
 
 ## 🐞 **Troubleshooting**
 
@@ -113,14 +151,14 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
   - **Check Emulator Status:** Ensure the emulator has fully booted by checking logs.
 
     ```bash
-    docker logs android-emulator
+    docker logs dockerify-android
     ```
 
 - **Emulator Not Starting:**
   - **Check Supervisor Logs:**
 
     ```bash
-    docker exec -it android-emulator bash
+    docker exec -it dockerify-android bash
     cat /var/log/supervisor/emulator.out.log
     cat /var/log/supervisor/emulator.err.log
     ```
