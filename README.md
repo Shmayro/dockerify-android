@@ -85,7 +85,7 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 2. **Run Docker Compose:**
 
     ```bash
-    docker-compose up -d
+    docker compose up -d
     ```
 
     > **Note:** This command launches the Android emulator and web interface. First boot takes some time to initialize. Once ready, the device will appear in the web interface at http://localhost:8000.
