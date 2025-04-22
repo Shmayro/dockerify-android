@@ -1,5 +1,6 @@
 services:
   dockerify-android:
+    container_name: dockerify-android
     image: shmayro/dockerify-android:latest
     build:
       context: .
@@ -14,4 +15,19 @@ services:
     privileged: true
     devices:
       - /dev/kvm
-    container_name: dockerify-android
+      
+  scrcpy-web:
+    container_name: scrcpy-web
+    restart: unless-stopped
+    image: shmayro/scrcpy-web:latest
+    privileged: true
+    ports:
+      - 8000:8000
+    depends_on:
+      dockerify-android:
+        condition: service_healthy
+    command: >
+      sh -c "
+        adb connect dockerify-android:5555 &&
+        npm start
+      "
