@@ -13,6 +13,12 @@
 
 Access and control the Android emulator directly in your web browser with our integrated scrcpy-web interface! No additional software needed - just open your browser and start using Android.
 
+> **Benefits of Web Interface:**
+> - No extra software to install
+> - Access from any computer with a web browser
+> - Full touchscreen and keyboard support
+> - Perfect for remote work or sharing the emulator with team members
+
 <br clear="right"/>
 
 ## 🏠 **Homepage**
@@ -93,12 +99,6 @@ The **quickest and easiest way** to interact with the Android emulator is throug
    - **Tiny H264** (recommended for best performance)
    - Broadway.js
    - H264 Converter
-
-> **Benefits of Web Interface:**
-> - No extra software to install
-> - Access from any computer with a web browser
-> - Full touchscreen and keyboard support
-> - Perfect for remote work or sharing the emulator with team members
 
 ![scrcpy-web interface](/doc/scrcpy-web-preview.png)
 
