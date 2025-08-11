@@ -70,6 +70,31 @@ adb push gapps-11/framework /system
 adb push gapps-11/app /system
 adb push gapps-11/priv-app /system
 
+# Install native bridge libraries for ARM compatibility
+echo "Installing native bridge ..."
+curl -L -o ndk-translation.tar.gz https://github.com/iwei20/libndk_extracted/archive/refs/heads/main.tar.gz
+mkdir ndk-translation
+tar -xf ndk-translation.tar.gz -C ndk-translation --strip-components=1
+for dir in bin etc lib lib64; do
+  if [ -d ndk-translation/system/$dir ]; then
+    adb push ndk-translation/system/$dir /system/
+  fi
+done
+adb shell 'cat >> /system/build.prop <<"EOF"
+ro.dalvik.vm.native.bridge=libndk_translation.so
+ro.enable.native.bridge.exec=1
+ro.enable.native.bridge.exec64=1
+ro.vendor.enable.native.bridge.exec=1
+ro.vendor.enable.native.bridge.exec64=1
+ro.ndk_translation.version=0.2.3
+ro.dalvik.vm.isa.arm=x86
+ro.dalvik.vm.isa.arm64=x86_64
+ro.product.cpu.abilist=x86_64,x86,armeabi-v7a,armeabi,arm64-v8a
+ro.product.cpu.abilist32=x86,armeabi-v7a,armeabi
+ro.product.cpu.abilist64=x86_64,arm64-v8a
+EOF'
+rm -rf ndk-translation ndk-translation.tar.gz
+
 echo "Root Script Starting..."
 
 # Root the VM

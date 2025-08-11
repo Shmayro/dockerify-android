@@ -52,6 +52,7 @@ Access and control the Android emulator directly in your web browser with the in
 - **scrcpy Support:** Mirror the emulator screen using scrcpy for a seamless user experience.
 - **Optimized Performance:** Utilizes native CPU capabilities for efficient emulation.
 - **Multi-Architecture Support:** Runs natively on both **x86** and **arm64** CPU architectures.
+- **Native Bridge for ARM Apps:** Bundled libndk translation layer allows running ARM-only APKs on the x86 system image.
 - **Docker Integration:** Easily deploy the Android emulator within a Docker container.
 - **Easy Setup:** Simple Docker commands to build and run the emulator.
 - **Supervisor Management:** Manages emulator processes with Supervisor for reliability.
