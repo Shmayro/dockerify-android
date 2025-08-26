@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Kill any running emulator instances before starting a new one
+pkill -f "/opt/android-sdk/emulator/emulator"
+
 # Use custom ramdisk if present
 if [ -f /data/android.avd/ramdisk.img ]; then
   RAMDISK="-ramdisk /data/android.avd/ramdisk.img"
