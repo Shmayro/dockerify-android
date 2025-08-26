@@ -142,23 +142,7 @@ The emulator's display can be adjusted with environment variables:
 - `SCREEN_RESOLUTION` (optional): sets the screen size in `WIDTHxHEIGHT` format.
 - `SCREEN_DENSITY` (optional): overrides the device pixel density in DPI.
 
-#### Docker run example
-
-```bash
-docker run -e SCREEN_RESOLUTION=1440x2560 -e SCREEN_DENSITY=560 shmayro/dockerify-android:latest
-```
-
-#### docker-compose snippet
-
-```yaml
-environment:
-  # Optional screen resolution in WIDTHxHEIGHT format
-  # - SCREEN_RESOLUTION=1440x2560
-  # Optional screen density (dpi)
-  # - SCREEN_DENSITY=560
-```
-
-If `SCREEN_RESOLUTION` or `SCREEN_DENSITY` are omitted, the emulator uses its default settings.
+Configure these variables in your `docker-compose.yml` file (the provided example contains commented entries for reference). If `SCREEN_RESOLUTION` or `SCREEN_DENSITY` are omitted, the emulator uses its default settings.
 
 ## 🔄 **First Boot Process**
 
