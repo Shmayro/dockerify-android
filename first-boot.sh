@@ -10,6 +10,9 @@ apply_settings() {
     sleep 5
   done
   adb root
+  adb wait-for-device
+  adb shell "mkdir -p /mnt/shared"
+  adb shell "mount -t 9p -o trans=virtio,version=9p2000.L shared /mnt/shared || mount -t virtiofs shared /mnt/shared"
   adb shell settings put global window_animation_scale 0
   adb shell settings put global transition_animation_scale 0
   adb shell settings put global animator_duration_scale 0

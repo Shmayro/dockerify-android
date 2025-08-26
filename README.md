@@ -90,6 +90,10 @@ To simplify the setup process, you can use the provided [docker-compose.yml](htt
 
     > **Note:** This command launches the Android emulator and web interface. First boot takes some time to initialize. Once ready, the device will appear in the web interface at http://localhost:8000.
 
+3. **Use the Shared Folder (optional):**
+
+    Any files placed in the `./shared` directory on the host will be available inside Android at `/mnt/shared`.
+
 ## 📡 **Usage**
 
 ### 🌐 Use the Web Interface to Access the Emulator
