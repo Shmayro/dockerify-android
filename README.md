@@ -35,6 +35,7 @@ Access and control the Android emulator directly in your web browser with the in
   - [Using Web Interface](#use-the-web-interface-to-access-the-emulator)
   - [Using ADB](#connect-via-adb)
   - [Using Desktop scrcpy](#use-scrcpy-to-mirror-the-emulator-screen)
+  - [Customizing Device Screen](#customizing-device-screen)
 - [First Boot Process](#-first-boot-process)
 - [Container Logs](#-container-logs)
 - [Roadmap](#-roadmap)
@@ -133,6 +134,15 @@ scrcpy -s localhost:5555
 ```
 
 > **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
+
+### Customizing Device Screen
+
+The emulator's display can be adjusted with environment variables:
+
+- `SCREEN_RESOLUTION` (optional): sets the screen size in `WIDTHxHEIGHT` format.
+- `SCREEN_DENSITY` (optional): overrides the device pixel density in DPI.
+
+Configure these variables in your `docker-compose.yml` file (the provided example contains commented entries for reference). If `SCREEN_RESOLUTION` or `SCREEN_DENSITY` are omitted, the emulator uses its default settings.
 
 ## 🔄 **First Boot Process**
 
