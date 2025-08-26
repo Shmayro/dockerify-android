@@ -1,3 +1,4 @@
+---
 services:
   dockerify-android:
     container_name: dockerify-android
@@ -7,15 +8,19 @@ services:
     ports:
       - "5555:5555"
     volumes:
-      - ./data:/data
+      - ./data-tmp:/data
       - ./extras:/extras
     environment:
       - DNS=one.one.one.one
       - RAM_SIZE=8192
+      # Optional screen resolution in WIDTHxHEIGHT format
+      #- SCREEN_RESOLUTION=720x720
+      # Optional screen density (dpi)
+      #- SCREEN_DENSITY=227
     privileged: true
     devices:
       - /dev/kvm
-      
+
   scrcpy-web:
     container_name: scrcpy-web
     restart: unless-stopped
