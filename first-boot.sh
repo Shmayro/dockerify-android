@@ -9,7 +9,7 @@ bool_true() {
 
 apply_settings() {
   adb wait-for-device
-  # Wait until the boot sequence is fully completed before applying tweaks.
+  # Waiting for the boot sequence to be completed.
   COMPLETED=$(adb shell getprop sys.boot_completed | tr -d '\r')
   while [ "$COMPLETED" != "1" ]; do
     COMPLETED=$(adb shell getprop sys.boot_completed | tr -d '\r')
