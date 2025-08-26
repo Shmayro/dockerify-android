@@ -135,32 +135,38 @@ scrcpy -s localhost:5555
 
 > **Note:** Ensure `scrcpy` is installed on your host machine. [Installation Guide](https://github.com/Genymobile/scrcpy#installation)
 
-### Customizing Device Screen
+## ⚙️ **Environment Variables**
 
-The emulator's display can be adjusted with environment variables:
+| Variable | Description | Default |
+| --- | --- | --- |
+| `DNS` | Private DNS server used inside the emulator | `one.one.one.one` |
+| `RAM_SIZE` | RAM in megabytes allocated to the emulator | `4096` |
+| `SCREEN_RESOLUTION` | Screen size in `WIDTHxHEIGHT` format (e.g. `1080x1920`) | device default |
+| `SCREEN_DENSITY` | Screen pixel density in DPI | device default |
+| `ROOT_SETUP` | Set to `1` to enable rooting and Magisk. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
+| `GAPPS_SETUP` | Set to `1` to install PICO GAPPS. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
 
-- `SCREEN_RESOLUTION` (optional): sets the screen size in `WIDTHxHEIGHT` format.
-- `SCREEN_DENSITY` (optional): overrides the device pixel density in DPI.
-
-Configure these variables in your `docker-compose.yml` file (the provided example contains commented entries for reference). If `SCREEN_RESOLUTION` or `SCREEN_DENSITY` are omitted, the emulator uses its default settings.
 
 ## 🔄 **First Boot Process**
 
 The first time you start the container, it will perform a comprehensive setup process that includes:
 
 1. **AVD Creation:** Creates a new Android Virtual Device running Android 30 (Android 11)
-2. **Installing PICO GAPPS:** Adds essential Google services to the emulator
-3. **Rooting the Device:** Performs multiple reboots to:
+2. **PICO GAPPS Installation** (when `GAPPS_SETUP=1`): Adds essential Google services.
+3. **Rooting the Device** (when `ROOT_SETUP=1`): Performs multiple reboots to:
    - Disable AVB verification
    - Remount system as writable
-   - Install root access via the rootAVD script
-   - Install PICO GAPPS components
-   - Configure optimal device settings
+   - Install Magisk for root access
+   - Reboot to apply root
+4. **Extras Copied:** Pushes everything from the `extras` directory to `/sdcard/Download` so files like APKs or Magisk modules are ready for manual installation on the device.
+5. **Configuring optimal device settings**
+
+`ROOT_SETUP` and `GAPPS_SETUP` are checked on every start. If you enable them after the first boot, the script installs the requested components once and marks them complete so they won't run again. Removing them later requires recreating the data volume.
 
 > **Important:** The first boot can take 10-15 minutes to complete. You'll know the process is finished when you see the following log output:
 > ```
 > Broadcast completed: result=0
-> Sucess !!
+> Success !!
 > 2025-04-22 13:45:18,724 INFO exited: first-boot (exit status 0; expected)
 > ```
 
@@ -196,7 +202,7 @@ This includes:
 - [ ] Support for additional Android versions
 - [x] Integration with CI/CD pipelines
 - [ ] Support ARM64 CPU architecture
-- [x] Preinstall PICO GAPPS
+- [x] PICO GAPPS installation
 - [x] Support Magisk
 - [x] Adding web interface of [scrcpy](https://github.com/Shmayro/ws-scrcpy-docker)
 - [x] Redirect all logs to container stdout/stderr
@@ -217,8 +223,8 @@ This includes:
 
 - **First Boot Taking Too Long:**
   - This is normal, as the first boot process needs to perform several operations including:
-    - Installing GAPPS
-    - Rooting the device
+    - Installing GAPPS (if enabled)
+    - Rooting the device (if enabled)
     - Configuring system settings
   - The process can take 10-15 minutes depending on your system performance
   - You can monitor progress with `docker logs -f dockerify-android`
