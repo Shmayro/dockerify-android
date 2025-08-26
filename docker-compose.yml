@@ -8,7 +8,7 @@ services:
     ports:
       - "5555:5555"
     volumes:
-      - ./data-tmp:/data
+      - ./data:/data
       - ./extras:/extras
     environment:
       - DNS=one.one.one.one
