@@ -11,12 +11,14 @@ services:
       - ./data:/data
       - ./extras:/extras
     environment:
-      - DNS=one.one.one.one
-      - RAM_SIZE=8192
+      DNS: one.one.one.one
+      # RAM_SIZE: 4096
       # Optional screen resolution in WIDTHxHEIGHT format
-      #- SCREEN_RESOLUTION=720x720
+      #SCREEN_RESOLUTION: 720x720
       # Optional screen density (dpi)
-      #- SCREEN_DENSITY=227
+      #SCREEN_DENSITY: 227
+      ROOT_SETUP: 0 # set to 1 to enable rooting
+      GAPPS_SETUP: 0 # set to 1 to install PICO GAPPS
     privileged: true
     devices:
       - /dev/kvm
@@ -36,3 +38,4 @@ services:
         adb connect dockerify-android:5555 &&
         npm start
       "
+

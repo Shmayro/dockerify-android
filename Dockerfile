@@ -44,6 +44,8 @@ RUN mkdir /root/.android/ && \
 
 # Detect architecture and set environment variable
 RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platform-tools" "platforms;android-30" "system-images;android-30;default;x86_64"
+# remove /opt/android-sdk/emulator/crashpad_handler
+RUN rm -f /opt/android-sdk/emulator/crashpad_handler
 # RUN if [ "$(uname -m)" = "aarch64" ]; then \
 #         unzip /root/emulator.zip -d $ANDROID_HOME && \
 # 	mv /root/package.xml $ANDROID_HOME/emulator/package.xml && \
@@ -73,8 +75,8 @@ RUN chmod +x /root/start-emulator.sh
 EXPOSE 5554 5555
 
 # Healthcheck to ensure the emulator is running
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD adb devices | grep emulator-5554 || exit 1
+HEALTHCHECK --interval=10s --timeout=10s --retries=600 \
+  CMD adb devices | grep emulator-5554 && test -f /data/.first-boot-done || exit 1
 
 # Start Supervisor to manage the emulator
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
