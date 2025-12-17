@@ -13,6 +13,17 @@ RUN apt-get update && \
         qemu-kvm \
         iproute2 \
         socat \
+		libnss3 \
+		libdbus-1-3 \
+		libasound2 \
+		libpulse0 \
+		libx11-6 libx11-xcb1 \
+		libxcomposite1 libxcursor1 libxdamage1 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
+		libdrm2 libgbm1 \
+		libgl1 \
+		libegl1 libegl1-mesa-dev \
+		libgles2 libgles2-mesa-dev \
+		mesa-utils \
         tzdata && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
