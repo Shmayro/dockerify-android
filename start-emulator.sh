@@ -3,6 +3,9 @@
 # Kill any running emulator instances before starting a new one
 pkill -f "/opt/android-sdk/emulator/emulator"
 
+# Removes .lock files before emulator starts to prevent crashes
+rm -rf /data/android.avd/*.lock
+
 # Use custom ramdisk if present
 if [ -f /data/android.avd/ramdisk.img ]; then
   RAMDISK="-ramdisk /data/android.avd/ramdisk.img"
