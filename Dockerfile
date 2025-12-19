@@ -3,6 +3,7 @@ FROM ubuntu:20.04
 # Install necessary packages
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libegl1 \
         openjdk-17-jdk-headless \
         wget \
         curl \
