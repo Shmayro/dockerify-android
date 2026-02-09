@@ -14,7 +14,8 @@ RUN apt-get update && \
         qemu-kvm \
         iproute2 \
         socat \
-        tzdata && \
+        tzdata \
+        squashfs-tools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
