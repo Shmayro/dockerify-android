@@ -85,11 +85,27 @@ install_arm_translation() {
   
   # Download houdini_9_y for ARM32 (armeabi-v7a) support
   echo "Downloading houdini_9_y for ARM32 support..."
-  wget -O houdini9_y.sfs http://dl.android-x86.org/houdini/9_y/houdini.sfs
+  wget -O houdini9_y.sfs http://dl.android-x86.org/houdini/9_y/houdini.sfs || {
+    echo "Failed to download houdini_9_y, trying alternate source..."
+    wget -O houdini9_y.sfs https://github.com/SGNight/Arm-NativeBridge/raw/main/houdini_9_y/houdini.sfs || {
+      echo "Failed to download ARM32 translation libraries"
+      cd /root
+      rm -rf /tmp/houdini
+      return 1
+    }
+  }
   
   # Download houdini_9_z for ARM64 (arm64-v8a) support
   echo "Downloading houdini_9_z for ARM64 support..."
-  wget -O houdini9_z.sfs http://dl.android-x86.org/houdini/9_z/houdini.sfs
+  wget -O houdini9_z.sfs http://dl.android-x86.org/houdini/9_z/houdini.sfs || {
+    echo "Failed to download houdini_9_z, trying alternate source..."
+    wget -O houdini9_z.sfs https://github.com/SGNight/Arm-NativeBridge/raw/main/houdini_9_z/houdini.sfs || {
+      echo "Failed to download ARM64 translation libraries"
+      cd /root
+      rm -rf /tmp/houdini
+      return 1
+    }
+  }
   
   # Create directories on device
   adb shell mkdir -p /system/lib/arm /system/lib64/arm64 /system/etc/binfmt_misc
@@ -98,24 +114,36 @@ install_arm_translation() {
   echo "Extracting houdini_9_y..."
   unsquashfs -f -d houdini9_y houdini9_y.sfs
   
-  # Push ARM32 translation files
-  adb push houdini9_y/system/lib/libhoudini.so /system/lib/
-  adb push houdini9_y/system/lib/arm/* /system/lib/arm/
-  adb push houdini9_y/system/bin/houdini /system/bin/
+  # Push ARM32 translation files if they exist
+  if [ -f houdini9_y/system/lib/libhoudini.so ]; then
+    adb push houdini9_y/system/lib/libhoudini.so /system/lib/
+  fi
+  if [ -d houdini9_y/system/lib/arm ]; then
+    adb push houdini9_y/system/lib/arm /system/lib/
+  fi
+  if [ -f houdini9_y/system/bin/houdini ]; then
+    adb push houdini9_y/system/bin/houdini /system/bin/
+  fi
   
   # Extract and push houdini_9_z (ARM64)
   echo "Extracting houdini_9_z..."
   unsquashfs -f -d houdini9_z houdini9_z.sfs
   
-  # Push ARM64 translation files
-  adb push houdini9_z/system/lib64/libhoudini.so /system/lib64/
-  adb push houdini9_z/system/lib64/arm64/* /system/lib64/arm64/
-  adb push houdini9_z/system/bin/houdini64 /system/bin/
+  # Push ARM64 translation files if they exist
+  if [ -f houdini9_z/system/lib64/libhoudini.so ]; then
+    adb push houdini9_z/system/lib64/libhoudini.so /system/lib64/
+  fi
+  if [ -d houdini9_z/system/lib64/arm64 ]; then
+    adb push houdini9_z/system/lib64/arm64 /system/lib64/
+  fi
+  if [ -f houdini9_z/system/bin/houdini64 ]; then
+    adb push houdini9_z/system/bin/houdini64 /system/bin/
+  fi
   
   # Set proper permissions
-  adb shell chmod 755 /system/bin/houdini /system/bin/houdini64
-  adb shell chmod 644 /system/lib/libhoudini.so /system/lib64/libhoudini.so
-  adb shell chmod -R 755 /system/lib/arm /system/lib64/arm64
+  adb shell chmod 755 /system/bin/houdini /system/bin/houdini64 2>/dev/null || true
+  adb shell chmod 644 /system/lib/libhoudini.so /system/lib64/libhoudini.so 2>/dev/null || true
+  adb shell chmod -R 755 /system/lib/arm /system/lib64/arm64 2>/dev/null || true
   
   # Update build.prop to enable ARM ABIs
   echo "Updating build.prop to enable ARM support..."
@@ -145,9 +173,11 @@ install_arm_translation() {
 copy_extras() {
   adb wait-for-device
   # Push any Magisk modules for manual installation later
-  for f in $(ls /extras/*); do
-    adb push $f /sdcard/Download/
-  done
+  if ls /extras/* 1> /dev/null 2>&1; then
+    for f in $(ls /extras/*); do
+      adb push $f /sdcard/Download/
+    done
+  fi
 }
 
 # Detect the container's IP and forward ADB to localhost.
