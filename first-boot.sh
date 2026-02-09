@@ -44,7 +44,7 @@ prepare_system() {
 install_gapps() {
   prepare_system
   echo "Installing GAPPS ..."
-  wget https://netcologne.dl.sourceforge.net/project/opengapps/x86_64/20220503/open_gapps-x86_64-11.0-pico-20220503.zip?viasf=1 -O gapps-11.zip
+  wget https://sourceforge.net/projects/opengapps/files/x86_64/20220503/open_gapps-x86_64-11.0-pico-20220503.zip/download -O gapps-11.zip
   unzip gapps-11.zip 'Core/*' -d gapps-11 && rm gapps-11.zip
   rm gapps-11/Core/setup*
   lzip -d gapps-11/Core/*.lz
