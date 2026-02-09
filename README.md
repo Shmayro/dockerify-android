@@ -148,6 +148,8 @@ scrcpy -s localhost:5555
 | `GAPPS_SETUP` | Set to `1` to install PICO GAPPS. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
 | `ARM_TRANSLATION` | Set to `1` to enable ARM translation (libhoudini) for running ARM/ARM64 apps on x86_64. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
 
+> **Note:** For detailed testing instructions for ARM translation, see [TESTING_ARM_TRANSLATION.md](TESTING_ARM_TRANSLATION.md).
+
 
 ## 🔄 **First Boot Process**
 
