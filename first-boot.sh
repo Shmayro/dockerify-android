@@ -147,6 +147,13 @@ install_arm_translation() {
   
   # Update build.prop to enable ARM ABIs
   echo "Updating build.prop to enable ARM support..."
+  # Remove any existing ARM-related properties to avoid duplicates
+  adb shell "sed -i '/ro.product.cpu.abilist/d' /system/build.prop"
+  adb shell "sed -i '/ro.dalvik.vm.native.bridge/d' /system/build.prop"
+  adb shell "sed -i '/ro.enable.native.bridge/d' /system/build.prop"
+  adb shell "sed -i '/ro.dalvik.vm.isa.arm/d' /system/build.prop"
+  
+  # Add ARM translation properties
   adb shell "echo 'ro.product.cpu.abilist=x86_64,x86,arm64-v8a,armeabi-v7a,armeabi' >> /system/build.prop"
   adb shell "echo 'ro.product.cpu.abilist32=x86,armeabi-v7a,armeabi' >> /system/build.prop"
   adb shell "echo 'ro.product.cpu.abilist64=x86_64,arm64-v8a' >> /system/build.prop"
@@ -173,11 +180,10 @@ install_arm_translation() {
 copy_extras() {
   adb wait-for-device
   # Push any Magisk modules for manual installation later
-  if ls /extras/* 1> /dev/null 2>&1; then
-    for f in $(ls /extras/*); do
-      adb push $f /sdcard/Download/
-    done
-  fi
+  for f in /extras/*; do
+    [ -e "$f" ] || continue
+    adb push "$f" /sdcard/Download/
+  done
 }
 
 # Detect the container's IP and forward ADB to localhost.
@@ -191,9 +197,17 @@ if bool_true "$GAPPS_SETUP" && [ ! -f /data/.gapps-done ]; then gapps_needed=tru
 if bool_true "$ROOT_SETUP" && [ ! -f /data/.root-done ]; then root_needed=true; fi
 if bool_true "$ARM_TRANSLATION" && [ ! -f /data/.arm-translation-done ]; then arm_translation_needed=true; fi
 
+needs_reboot() {
+  # Reboot needed if only GAPPS was installed (no root or ARM translation)
+  [ "$gapps_needed" = true ] && [ "$root_needed" = false ] && [ "$arm_translation_needed" = false ]
+}
+
 # Skip initialization if first boot already completed.
 if [ -f /data/.first-boot-done ]; then
-  [ "$gapps_needed" = true ] && install_gapps && [ "$root_needed" = false ] && [ "$arm_translation_needed" = false ] && adb reboot
+  if [ "$gapps_needed" = true ]; then
+    install_gapps
+    needs_reboot && adb reboot
+  fi
   [ "$root_needed" = true ] && install_root
   [ "$arm_translation_needed" = true ] && install_arm_translation
   apply_settings
@@ -204,7 +218,10 @@ fi
 echo "Init AVD ..."
 echo "no" | avdmanager create avd -n android -k "system-images;android-30;default;x86_64"
 
-[ "$gapps_needed" = true ] && install_gapps && [ "$root_needed" = false ] && [ "$arm_translation_needed" = false ] && adb reboot
+if [ "$gapps_needed" = true ]; then
+  install_gapps
+  needs_reboot && adb reboot
+fi
 [ "$root_needed" = true ] && install_root
 [ "$arm_translation_needed" = true ] && install_arm_translation
 apply_settings
