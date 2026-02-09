@@ -47,6 +47,7 @@ Access and control the Android emulator directly in your web browser with the in
 ## 🔧 **Features**
 
 - **🌐 Web Interface:** Access the emulator directly from your browser with the integrated [scrcpy-web](https://github.com/Shmayro/ws-scrcpy-docker) interface.
+- **🔄 ARM Translation Support:** Run ARM/ARM64 native applications on x86_64 emulator using libhoudini translation layer. This allows installation of modern Android apps that ship only with ARM native libraries (arm64-v8a, armeabi-v7a).
 - **Root and Magisk Preinstalled:** Comes with root access and Magisk preinstalled for advanced modifications.
 - **PICO GAPPS Preinstalled:** Includes PICO GAPPS for essential Google services.
 - **Seamless ADB Access:** Connect to the emulator via ADB from the host and other networked devices.
@@ -145,6 +146,9 @@ scrcpy -s localhost:5555
 | `SCREEN_DENSITY` | Screen pixel density in DPI | device default |
 | `ROOT_SETUP` | Set to `1` to enable rooting and Magisk. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
 | `GAPPS_SETUP` | Set to `1` to install PICO GAPPS. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
+| `ARM_TRANSLATION` | Set to `1` to enable ARM translation (libhoudini) for running ARM/ARM64 apps on x86_64. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
+
+> **Note:** For detailed testing instructions for ARM translation, see [TESTING_ARM_TRANSLATION.md](TESTING_ARM_TRANSLATION.md).
 
 
 ## 🔄 **First Boot Process**
@@ -158,10 +162,15 @@ The first time you start the container, it will perform a comprehensive setup pr
    - Remount system as writable
    - Install Magisk for root access
    - Reboot to apply root
-4. **Extras Copied:** Pushes everything from the `extras` directory to `/sdcard/Download` so files like APKs or Magisk modules are ready for manual installation on the device.
-5. **Configuring optimal device settings**
+4. **ARM Translation Installation** (when `ARM_TRANSLATION=1`): Installs libhoudini ARM translation layer to enable running ARM/ARM64 native apps on x86_64:
+   - Downloads and installs libhoudini for both ARM32 (armeabi-v7a) and ARM64 (arm64-v8a) support
+   - Updates system properties to advertise ARM ABI support
+   - Configures native bridge for transparent ARM-to-x86 translation
+   - After installation, the device will report `ro.product.cpu.abilist = x86_64,x86,arm64-v8a,armeabi-v7a,armeabi`
+5. **Extras Copied:** Pushes everything from the `extras` directory to `/sdcard/Download` so files like APKs or Magisk modules are ready for manual installation on the device.
+6. **Configuring optimal device settings**
 
-`ROOT_SETUP` and `GAPPS_SETUP` are checked on every start. If you enable them after the first boot, the script installs the requested components once and marks them complete so they won't run again. Removing them later requires recreating the data volume.
+`ROOT_SETUP`, `GAPPS_SETUP`, and `ARM_TRANSLATION` are checked on every start. If you enable them after the first boot, the script installs the requested components once and marks them complete so they won't run again. Removing them later requires recreating the data volume.
 
 > **Important:** The first boot can take 10-15 minutes to complete. You'll know the process is finished when you see the following log output:
 > ```
@@ -201,6 +210,7 @@ This includes:
 
 - [ ] Support for additional Android versions
 - [x] Integration with CI/CD pipelines
+- [x] ARM Translation support (libhoudini) for running ARM64 apps on x86_64
 - [ ] Support ARM64 CPU architecture
 - [x] PICO GAPPS installation
 - [x] Support Magisk
@@ -225,9 +235,21 @@ This includes:
   - This is normal, as the first boot process needs to perform several operations including:
     - Installing GAPPS (if enabled)
     - Rooting the device (if enabled)
+    - Installing ARM Translation (if enabled)
     - Configuring system settings
   - The process can take 10-15 minutes depending on your system performance
+  - ARM Translation installation adds an additional 3-5 minutes to download and install libhoudini
   - You can monitor progress with `docker logs -f dockerify-android`
+
+- **ARM/ARM64 Apps Still Not Installing:**
+  - Ensure `ARM_TRANSLATION=1` is set in your docker-compose.yml or environment variables
+  - Check that the first boot completed successfully with `docker logs dockerify-android | grep "ARM Translation"`
+  - Verify ARM ABIs are available:
+    ```bash
+    adb shell getprop ro.product.cpu.abilist
+    ```
+    Should show: `x86_64,x86,arm64-v8a,armeabi-v7a,armeabi`
+  - If ARM Translation was enabled after the first boot, ensure the container was restarted after the installation completed
 
 - **Emulator Not Starting:**
   - **Check Container Logs:**
