@@ -145,13 +145,16 @@ scrcpy -s localhost:5555
 | `SCREEN_DENSITY` | Screen pixel density in DPI | device default |
 | `ROOT_SETUP` | Set to `1` to enable rooting and Magisk. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
 | `GAPPS_SETUP` | Set to `1` to install PICO GAPPS. Can be turned on after the first start but cannot be undone without recreating the data volume. | `0` |
+| `ANDROID_VERSION` | Android API version to emulate (30 = Android 11, 31 = Android 12, 33 = Android 13, 34 = Android 14, 35 = Android 15, 36 = Android 16). Also enables multi-version support. | `30` |
+| `GAPPS_VERSION` | GAPPS version to download. Default behavior derives from ANDROID_VERSION. | `11` |
+| `DATA_PARTITION_SIZE` | Data partition size for internal storage (e.g., `4G`, `8G`, `16G`). Default is 4G. | `4G` |
 
 
 ## 🔄 **First Boot Process**
 
 The first time you start the container, it will perform a comprehensive setup process that includes:
 
-1. **AVD Creation:** Creates a new Android Virtual Device running Android 30 (Android 11)
+1. **AVD Creation:** Creates a new Android Virtual Device using the Android version configured via ANDROID_VERSION (default 30 – Android 11). This value selects the platform image (e.g., android-${ANDROID_VERSION}) for the AVD and SDK downloads.
 2. **PICO GAPPS Installation** (when `GAPPS_SETUP=1`): Adds essential Google services.
 3. **Rooting the Device** (when `ROOT_SETUP=1`): Performs multiple reboots to:
    - Disable AVB verification

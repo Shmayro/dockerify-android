@@ -35,6 +35,9 @@ if [ -f "$CONFIG_FILE" ]; then
   if [ -n "$SCREEN_DENSITY" ]; then
     update_config "hw.lcd.density" "$SCREEN_DENSITY"
   fi
+  if [ -n "$DATA_PARTITION_SIZE" ]; then
+    update_config "hw.dataPartition.size" "$DATA_PARTITION_SIZE"
+  fi
 fi
 
 # Start the emulator with the appropriate ramdisk.img

@@ -1,4 +1,6 @@
 FROM ubuntu:20.04
+ARG ANDROID_VERSION=30
+ENV ANDROID_VERSION=${ANDROID_VERSION}
 
 # Install necessary packages
 RUN apt-get update && \
@@ -44,7 +46,7 @@ RUN mkdir /root/.android/ && \
 
 
 # Detect architecture and set environment variable
-RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platform-tools" "platforms;android-30" "system-images;android-30;default;x86_64"
+RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platform-tools" "platforms;android-${ANDROID_VERSION}" "system-images;android-${ANDROID_VERSION};default;x86_64"
 # remove /opt/android-sdk/emulator/crashpad_handler
 RUN rm -f /opt/android-sdk/emulator/crashpad_handler
 # RUN if [ "$(uname -m)" = "aarch64" ]; then \
