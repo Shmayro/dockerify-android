@@ -1,6 +1,7 @@
 FROM ubuntu:20.04
+ARG ANDROID_VERSION=30
+ENV ANDROID_VERSION=${ANDROID_VERSION}
 
-# Install necessary packages
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libegl1 \
@@ -8,17 +9,26 @@ RUN apt-get update && \
         wget \
         curl \
         git \
-        lzip \
+        xz-utils \
         unzip \
         supervisor \
         qemu-kvm \
         iproute2 \
         socat \
-        tzdata && \
+        tzdata \
+        squashfs-tools \
+        procps && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set up Android SDK
+RUN curl -s "https://dl.google.com/android/repository/repository2-1.xml" | \
+    grep -oP 'emulator-linux_x64-\d+\.zip' | head -1 | \
+    awk '{print "https://dl.google.com/android/repository/" $0}' | \
+    wget -q -O /tmp/emulator.zip - || true && \
+    if [ -s /tmp/emulator.zip ] && [ -f /tmp/emulator.zip ]; then \
+        unzip -q /tmp/emulator.zip -d /opt/android-sdk && rm /tmp/emulator.zip; \
+    fi
+
 RUN mkdir -p /opt/android-sdk/cmdline-tools && \
     cd /opt/android-sdk/cmdline-tools && \
     wget https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip -O cmdline-tools.zip && \
@@ -29,61 +39,41 @@ RUN mkdir -p /opt/android-sdk/cmdline-tools && \
 
 ENV ANDROID_HOME=/opt/android-sdk
 ENV ANDROID_AVD_HOME=/data
-ENV ADB_DIR="$ANDROID_HOME/platform-tools"
-ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ADB_DIR:$PATH"
+ENV PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH:$ANDROID_HOME/platform-tools"
 
-# Initializing the required directories.
 RUN mkdir /root/.android/ && \
-	touch /root/.android/repositories.cfg && \
-	mkdir /data && \
+ 	touch /root/.android/repositories.cfg && \
+ 	mkdir /data && \
     mkdir /extras
 
-# Copy emulator.zip
-#COPY emulator.zip /root/emulator.zip
-#COPY emulator/package.xml /root/package.xml
+RUN export ANDROID_VERSION=$ANDROID_VERSION && \
+    yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" && \
+    if [ "$ANDROID_VERSION" -ge 35 ]; then \
+        yes | sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-${ANDROID_VERSION}" "system-images;android-${ANDROID_VERSION};google_apis;x86_64" || true; \
+    else \
+        yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platforms;android-${ANDROID_VERSION}" "system-images;android-${ANDROID_VERSION};default;x86_64"; \
+    fi && \
+    yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" || true
 
+RUN if [ ! -f "$ANDROID_HOME/platform-tools/adb" ]; then \
+        echo "ERROR: adb not found at $ANDROID_HOME/platform-tools/adb"; \
+        ls -la $ANDROID_HOME/; \
+        exit 1; \
+    fi
 
-# Detect architecture and set environment variable
-RUN yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platform-tools" "platforms;android-30" "system-images;android-30;default;x86_64"
-# remove /opt/android-sdk/emulator/crashpad_handler
 RUN rm -f /opt/android-sdk/emulator/crashpad_handler
-# RUN if [ "$(uname -m)" = "aarch64" ]; then \
-#         unzip /root/emulator.zip -d $ANDROID_HOME && \
-# 	mv /root/package.xml $ANDROID_HOME/emulator/package.xml && \
-#         rm /root/emulator.zip && \
-#         yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-29" "system-images;android-29;default;arm64-v8a" && \
-#         echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;arm64-v8a"; \
-#     else \
-#         yes | sdkmanager --sdk_root=$ANDROID_HOME "emulator" "platform-tools" "platforms;android-29" "system-images;android-29;default;x86_64" && \
-#         echo "no" | avdmanager create avd -n test -k "system-images;android-29;default;x86_64"; \
-#     fi
 
-# Copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy the rootAVD repository
-#COPY rootAVD /root/rootAVD
-
-# Copy the first-boot script
 COPY first-boot.sh /root/first-boot.sh
 RUN chmod +x /root/first-boot.sh
 
-# Copy the start-emulator script
 COPY start-emulator.sh /root/start-emulator.sh
 RUN chmod +x /root/start-emulator.sh
 
-# Expose necessary ports
 EXPOSE 5554 5555
 
-# Healthcheck to ensure the emulator is running
-HEALTHCHECK --interval=10s --timeout=10s --retries=600 \
-  CMD adb devices | grep emulator-5554 && test -f /data/.first-boot-done || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --retries=60 \
+  CMD ps aux | grep -v grep | grep -q emulator || test -f /data/.first-boot-done
 
-# Start Supervisor to manage the emulator
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
-# docker build -t dockerify-android .
-# docker run -d --name dockerify-android --device /dev/kvm --privileged -p 5555:5555 dockerify-android
-# docker run -d --name dockerify-android --device /dev/kvm --privileged -p 5555:5555 shmayro/dockerify-android
-# docker exec -it dockerify-android tail -f /var/log/supervisor/emulator.out
-# docker exec -it dockerify-android tail -f /var/log/supervisor/first-boot.out.log

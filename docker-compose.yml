@@ -5,12 +5,15 @@ services:
     image: shmayro/dockerify-android:latest
     build:
       context: .
+    env_file:
+      - .env
     ports:
       - "5555:5555"
     volumes:
       - ./data:/data
       - ./extras:/extras
     environment:
+      ANDROID_VERSION: 30
       DNS: one.one.one.one
       # RAM_SIZE: 4096
       # Optional screen resolution in WIDTHxHEIGHT format
@@ -22,6 +25,12 @@ services:
     privileged: true
     devices:
       - /dev/kvm
+    healthcheck:
+      test: ["CMD", "ps", "aux"]
+      interval: 30s
+      timeout: 10s
+      retries: 60
+      start_period: 60s
 
   scrcpy-web:
     container_name: scrcpy-web
@@ -38,4 +47,3 @@ services:
         adb connect dockerify-android:5555 &&
         npm start
       "
-
