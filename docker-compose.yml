@@ -5,18 +5,23 @@ services:
     image: shmayro/dockerify-android:latest
     build:
       context: .
+    env_file:
+      - .env
     ports:
       - "5555:5555"
     volumes:
       - ./data:/data
       - ./extras:/extras
     environment:
+      ANDROID_VERSION: 30
       DNS: one.one.one.one
       # RAM_SIZE: 4096
       # Optional screen resolution in WIDTHxHEIGHT format
       #SCREEN_RESOLUTION: 720x720
       # Optional screen density (dpi)
       #SCREEN_DENSITY: 227
+      #DATA_PARTITION_SIZE: 4G
+      #PORT_FORWARD: 3128:3128
       ROOT_SETUP: 0 # set to 1 to enable rooting
       GAPPS_SETUP: 0 # set to 1 to install PICO GAPPS
     privileged: true
@@ -38,4 +43,3 @@ services:
         adb connect dockerify-android:5555 &&
         npm start
       "
-
